@@ -890,7 +890,14 @@ class Visualizer extends Component {
             metricGridLineNumbers.visible = visible && (units === METRIC_UNITS);
             this.group.add(metricGridLineNumbers);
         }
-
+        {
+            var geometry = new THREE.PlaneGeometry(890, 890);
+            var texture = new THREE.TextureLoader().load('assets/textures/cnc13.jpg');
+            var material = new THREE.MeshBasicMaterial({ map: texture });
+            var mesh = new THREE.Mesh(geometry, material);
+            this.group.add(mesh);
+            mesh.position.set(-445, -445, -25.4);
+        }
         { // Cutting Tool
             Promise.all([
                 loadSTL('assets/models/stl/bit.stl').then(geometry => geometry),
