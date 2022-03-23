@@ -48,6 +48,7 @@ import * as WebGL from 'app/lib/three/WebGL';
 import log from 'app/lib/log';
 import _ from 'lodash';
 import store from 'app/store';
+import combokeys from 'app/lib/combokeys';
 import { Toaster, TOASTER_DANGER, TOASTER_UNTIL_CLOSE } from '../../lib/toaster/ToasterLib';
 import controller from '../../lib/controller';
 import { getBoundingBox, loadSTL, loadTexture } from './helpers';
@@ -512,6 +513,37 @@ class Visualizer extends Component {
         this.redrawGrids();
         this.rerenderGCode();
     }
+    buttonControlEvents = {
+        JOG_TO_MOUSE_LOC: () => {
+            var geometry = new THREE.PlaneGeometry(1890, 1890);
+            var texture = new THREE.TextureLoader().load('assets/textures/cnc13.jpg');
+            var material = new THREE.MeshBasicMaterial({ map: texture });
+            var mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(-445, -445, -25.4);
+            this.scene.add(mesh);
+        }
+    }
+
+    addButtonControlEvents() {
+        combokeys.reload();
+
+        Object.keys(this.buttonControlEvents).forEach(eventName => {
+            const callback = this.buttonControlEvents[eventName];
+            combokeys.on(eventName, callback);
+        });
+    }
+
+    updateButtonControlEvents = () => {
+        this.removeButtonControlEvents();
+        this.addButtonControlEvents();
+    }
+
+    removeButtonControlEvents() {
+        Object.keys(this.buttonControlEvents).forEach(eventName => {
+            const callback = this.buttonControlEvents[eventName];
+            combokeys.removeListener(eventName, callback);
+        });
+    }
 
     subscribe() {
         const tokens = [
@@ -521,6 +553,9 @@ class Visualizer extends Component {
             pubsub.subscribe('visualizer:redraw', () => {
                 this.recolorScene();
                 this.updateScene({ forceUpdate: true });
+            }),
+            pubsub.subscribe('keybindingsUpdated', () => {
+                this.updateButtonControlEvents();
             }),
             pubsub.subscribe('file:load', (msg, data) => {
                 const { isSecondary, activeVisualizer } = this.props;
@@ -890,7 +925,7 @@ class Visualizer extends Component {
             metricGridLineNumbers.visible = visible && (units === METRIC_UNITS);
             this.group.add(metricGridLineNumbers);
         }
-        {
+        { // Plane for cell phone or webcam picture of CNC bed.
             var geometry = new THREE.PlaneGeometry(890, 890);
             var texture = new THREE.TextureLoader().load('assets/textures/cnc13.jpg');
             var material = new THREE.MeshBasicMaterial({ map: texture });
