@@ -734,7 +734,18 @@ const defaultState = {
             category: LOCATION_CATEGORY,
         },
 
-
+        { // Jog to Mouse Location
+            id: 71,
+            title: 'Jog: To Mouse Location',
+            keys: 'm',
+            cmd: 'JOG',
+            payload: {
+                axis: { [AXIS_X]: 0, [AXIS_Y]: 0 },
+            },
+            preventDefault: false,
+            isActive: true,
+            category: JOGGING_CATEGORY,
+        },
         { // Jog X+
             id: 32,
             title: 'Jog: X+',
