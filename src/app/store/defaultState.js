@@ -738,10 +738,7 @@ const defaultState = {
             id: 71,
             title: 'Jog: To Mouse Location',
             keys: 'm',
-            cmd: 'JOG',
-            payload: {
-                axis: { [AXIS_X]: 0, [AXIS_Y]: 0 },
-            },
+            cmd: 'JOG_TO_MOUSE_LOC',
             preventDefault: false,
             isActive: true,
             category: JOGGING_CATEGORY,

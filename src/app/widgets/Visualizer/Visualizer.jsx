@@ -515,12 +515,16 @@ class Visualizer extends Component {
     }
     buttonControlEvents = {
         JOG_TO_MOUSE_LOC: () => {
-            var geometry = new THREE.PlaneGeometry(1890, 1890);
+            this.toTopView();
+            var geometry = new THREE.PlaneGeometry(890, 890);
             var texture = new THREE.TextureLoader().load('assets/textures/cnc13.jpg');
             var material = new THREE.MeshBasicMaterial({ map: texture });
             var mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set(-445, -445, -25.4);
+            mesh.position.set(445, 445, 0);
             this.scene.add(mesh);
+            this.updateScene({ forceUpdate: true });
+            console.log('JOG TO MOUSE LOC');
+            this.toTopView();
         }
     }
 
@@ -932,6 +936,7 @@ class Visualizer extends Component {
             var mesh = new THREE.Mesh(geometry, material);
             this.group.add(mesh);
             mesh.position.set(-445, -445, -25.4);
+            console.log('inside original plane generator');
         }
         { // Cutting Tool
             Promise.all([
