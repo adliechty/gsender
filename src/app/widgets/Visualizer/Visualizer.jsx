@@ -518,61 +518,51 @@ class Visualizer extends Component {
         this.redrawGrids();
         this.rerenderGCode();
     }
+    getMousePhysicalLoc() {
+        //https://stackoverflow.com/questions/34698393/get-mouse-clicked-points-3d-coordinate-in-three-js
+        var canvas = this.renderer.domElement;
+        const canvasPosition = canvas.getBoundingClientRect();
+        var mousePosition = new THREE.Vector2();
+        var rayCaster = new THREE.Raycaster();
+
+        mousePosition.x = ((this.clientX - canvasPosition.left) / canvas.width) * 2 - 1;
+        mousePosition.y = -((this.clientY - canvasPosition.top) / canvas.height) * 2 + 1;
+        console.log('mousePosition');
+        console.log(mousePosition.x);
+        console.log(mousePosition.y);
+
+        rayCaster.setFromCamera(mousePosition, this.camera.cameraO);
+        //var intersects = rayCaster.intersectObjects(this.group.getObjectByName('cnc bed'), true);
+        var object = this.scene.getObjectByName('cnc bed', true);
+        var intersects = rayCaster.intersectObjects(object, true);
+        if (object) {
+            console.log(object.name);
+        }
+
+        if (intersects.length > 0) {
+            console.log('intersectLocation');
+            console.log(intersects[0].point.x);
+            console.log(intersects[0].point.y);
+            console.log(intersects[0].point.z);
+            return intersects[0].point;
+        } else {
+            return null;
+        }
+    }
+
     buttonControlEvents = {
         JOG_TO_MOUSE_LOC: () => {
-            //var geometry = new THREE.PlaneGeometry(890, 890);
-            //var texture = new THREE.TextureLoader().load('assets/textures/cnc13.jpg');
-            //var material = new THREE.MeshBasicMaterial({ map: texture });
-            //var mesh = new THREE.Mesh(geometry, material);
-            //mesh.position.set(445, 445, 0);
-            //this.scene.add(mesh);
-            //this.updateScene({ forceUpdate: true });
-            //mesh.updateMatrixWorld();
+            this.getMousePhysicalLoc();
+        },
 
-            //https://stackoverflow.com/questions/34698393/get-mouse-clicked-points-3d-coordinate-in-three-js
-            var canvas = this.renderer.domElement;
-            const canvasPosition = canvas.getBoundingClientRect();
-            var mousePosition = new THREE.Vector2();
-            var rayCaster = new THREE.Raycaster();
-
-            mousePosition.x = ((this.clientX - canvasPosition.left) / canvas.width) * 2 - 1;
-            mousePosition.y = -((this.clientY - canvasPosition.top) / canvas.height) * 2 + 1;
-            console.log('mousePosition');
-            console.log(mousePosition.x);
-            console.log(mousePosition.y);
-
-            rayCaster.setFromCamera(mousePosition, this.camera.cameraO);
-            var intersects = rayCaster.intersectObjects(this.scene.children, true);
-
-            if (intersects.length > 0) {
-                console.log('intersectLocation');
-                console.log(intersects[0].point.x);
-                console.log(intersects[0].point.y);
-                console.log(intersects[0].point.z);
+        SET_WORKPIECE_XY_MOUSE_LOC: () => {
+            const loc = this.getMousePhysicalLoc();
+            if (loc != null) {
+                if (this.visualizer) {
+                    this.visualizer.group.position.set(loc.x, loc.y, 0.0);
+                    this.updateScene({ forceUpdate: true });
+                }
             }
-            /*console.log('mouseLoc');
-            console.log(this.clientX);
-            console.log(this.clientY);
-            var vec = new THREE.Vector3(); // create once and reuse
-            var pos = new THREE.Vector3(); // create once and reuse
-            //vec.set((this.clientX / window.innerWidth) * 2 - 1, -(this.clientY / window.innerHeight) * 2 + 1, 0.5);
-            //console.log('cameraLoc');
-            console.log(this.camera.position.x);
-            console.log(this.camera.position.y);
-            console.log(this.camera.position.z);
-
-            vec.unproject(this.camera);
-
-            vec.sub(this.camera.position).normalize();
-
-            var distance = (-25.4 - this.camera.position.z) / vec.z;
-
-            pos.copy(this.camera.position).add(vec.multiplyScalar(distance));
-            console.log('Mouse Plane Loc');
-            console.log(pos.x);
-            console.log(pos.y);
-            console.log(pos.z);
-            */
         }
     }
 
@@ -1272,7 +1262,7 @@ class Visualizer extends Component {
             return;
         }
         const obj = this.visualizer.render(vizualization);
-        obj.name = '';
+        obj.name = 'gcode';
         this.group.add(obj);
 
         const bbox = getBoundingBox(obj);
