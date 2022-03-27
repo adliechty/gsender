@@ -206,6 +206,7 @@ class Visualizer extends Component {
     componentDidMount() {
         this.subscribe();
         this.addControllerEvents();
+        this.addButtonControlEvents();
         this.addResizeEventListener();
         this.addMouseEventListenter();
         //store.on('change', this.changeMachineProfile);
@@ -417,6 +418,7 @@ class Visualizer extends Component {
 
     componentWillUnmount() {
         this.removeControllerEvents();
+        this.removeButtonControlEvents();
         this.unsubscribe();
         this.removeResizeEventListener();
         store.removeListener('change', this.changeMachineProfile);
