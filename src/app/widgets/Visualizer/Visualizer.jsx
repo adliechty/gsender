@@ -531,10 +531,19 @@ class Visualizer extends Component {
         console.log(mousePosition.x);
         console.log(mousePosition.y);
 
-        rayCaster.setFromCamera(mousePosition, this.camera.cameraO);
-        //var intersects = rayCaster.intersectObjects(this.group.getObjectByName('cnc bed'), true);
+        if (this.camera.inPerspectiveMode) {
+            console.log('perspective');
+            rayCaster.setFromCamera(mousePosition, this.camera.cameraP);
+            console.log(this.camera.inPerspectiveMode);
+        } else {
+            console.log('orthographic');
+            console.log(this.camera.inOrthographicMode);
+            rayCaster.setFromCamera(mousePosition, this.camera.cameraO);
+        }
         var object = this.scene.getObjectByName('cnc bed', true);
-        var intersects = rayCaster.intersectObjects(object, true);
+        object.updateMatrixWorld();
+        //Must put mesh object in array for intersectObjects to work: https://github.com/mrdoob/three.js/issues/8081
+        var intersects = rayCaster.intersectObjects([object], true);
         if (object) {
             console.log(object.name);
         }
@@ -663,11 +672,7 @@ class Visualizer extends Component {
         document.addEventListener('mousemove', (event) => {
             this.clientX = event.clientX;
             this.clientY = event.clientY;
-            //console.log('mouseMove');
-            //console.log(this.clientX);
-            //console.log(this.clientY);
         }, false);
-        console.log('Listener mousemove added');
     }
 
     removeResizeEventListener() {
@@ -984,9 +989,9 @@ class Visualizer extends Component {
             var material = new THREE.MeshBasicMaterial({ map: texture });
             var mesh = new THREE.Mesh(geometry, material);
             mesh.name = 'cnc bed';
-            this.group.add(mesh);
+            mesh.side = THREE.DoubleSide;
             mesh.position.set(-445, -445, -25.4);
-            console.log('inside original plane generator');
+            this.group.add(mesh);
         }
         { // Cutting Tool
             Promise.all([
