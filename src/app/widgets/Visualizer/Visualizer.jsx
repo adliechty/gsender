@@ -527,27 +527,23 @@ class Visualizer extends Component {
 
         mousePosition.x = ((this.clientX - canvasPosition.left) / canvas.width) * 2 - 1;
         mousePosition.y = -((this.clientY - canvasPosition.top) / canvas.height) * 2 + 1;
-        console.log('mousePosition');
-        console.log(mousePosition.x);
-        console.log(mousePosition.y);
 
+        //setFromCamera position does not support combined cameras, therefore determine which camera (perspective or orthographic
+        //is used, clone that, then copy over parent camera information to cloned camera
+        var camera = null;
         if (this.camera.inPerspectiveMode) {
-            console.log('perspective');
-            rayCaster.setFromCamera(mousePosition, this.camera.cameraP);
-            console.log(this.camera.inPerspectiveMode);
+            camera = this.camera.cameraP.clone();
         } else {
-            console.log('orthographic');
-            console.log(this.camera.inOrthographicMode);
-            rayCaster.setFromCamera(mousePosition, this.camera.cameraO);
+            camera = this.camera.cameraO.clone();
         }
+        camera.position.copy(this.camera);
+        camera.matrixWorld.copy(this.camera.matrixWorld);
+
+        rayCaster.setFromCamera(mousePosition, camera);
         var object = this.scene.getObjectByName('cnc bed', true);
         object.updateMatrixWorld();
         //Must put mesh object in array for intersectObjects to work: https://github.com/mrdoob/three.js/issues/8081
         var intersects = rayCaster.intersectObjects([object], true);
-        if (object) {
-            console.log(object.name);
-        }
-
         if (intersects.length > 0) {
             console.log('intersectLocation');
             console.log(intersects[0].point.x);
@@ -1524,6 +1520,7 @@ class Visualizer extends Component {
         this.controls.object.position.add(pan);
         this.controls.target.add(pan);
         this.controls.update();
+        console.log('pan');
     }
 
     // http://stackoverflow.com/questions/18581225/orbitcontrol-or-trackballcontrol
