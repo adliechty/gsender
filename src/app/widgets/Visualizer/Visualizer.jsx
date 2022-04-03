@@ -557,7 +557,11 @@ class Visualizer extends Component {
 
     buttonControlEvents = {
         JOG_TO_MOUSE_LOC: () => {
-            this.getMousePhysicalLoc();
+            var loc = this.getMousePhysicalLoc();
+            if (loc != null) {
+                //Rapid traverse to machine location clicked on by mouse
+                controller.command('gcode', `G53 G21 G0 X${loc.x} Y${loc.y}`);
+            }
         },
 
         SET_WORKPIECE_XY_MOUSE_LOC: () => {
@@ -566,6 +570,7 @@ class Visualizer extends Component {
                 if (this.visualizer) {
                     this.visualizer.group.position.set(loc.x, loc.y, 0.0);
                     this.updateScene({ forceUpdate: true });
+                    controller.command('gcode', `G54 X${loc.x} Y${loc.y}`);
                 }
             }
         }
@@ -980,13 +985,15 @@ class Visualizer extends Component {
             this.group.add(metricGridLineNumbers);
         }
         { // Plane for cell phone or webcam picture of CNC bed.
-            var geometry = new THREE.PlaneGeometry(890, 890);
+            //Placeholder for now for plane size
+            var geometry = new THREE.PlaneGeometry(1092.2, 889);
             var texture = new THREE.TextureLoader().load('assets/textures/cnc13.jpg');
             var material = new THREE.MeshBasicMaterial({ map: texture });
             var mesh = new THREE.Mesh(geometry, material);
             mesh.name = 'cnc bed';
             mesh.side = THREE.DoubleSide;
-            mesh.position.set(-445, -445, -25.4);
+            //Put overlay at most negative position that is supported by CNC machine so G code is always on top of it.
+            mesh.position.set(-1092.2 / 2.0 + 97.282, -889 / 2.0, -95.25);
             this.group.add(mesh);
         }
         { // Cutting Tool
