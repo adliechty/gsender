@@ -734,6 +734,15 @@ const defaultState = {
             category: LOCATION_CATEGORY,
         },
 
+        { // Set Workpiece zero to mouse loc
+            id: 72,
+            title: 'Set Workpiece On XY Mouse Location',
+            keys: 'z',
+            cmd: 'SET_WORKPIECE_XY_MOUSE_LOC',
+            preventDefault: false,
+            isActive: true,
+            category: LOCATION_CATEGORY,
+        },
         { // Jog to Mouse Location
             id: 71,
             title: 'Jog: To Mouse Location',
