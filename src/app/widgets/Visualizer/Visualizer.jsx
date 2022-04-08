@@ -544,12 +544,15 @@ class Visualizer extends Component {
         object.updateMatrixWorld();
         //Must put mesh object in array for intersectObjects to work: https://github.com/mrdoob/three.js/issues/8081
         var intersects = rayCaster.intersectObjects([object], true);
+        var pivotPoint = this.pivotPoint.get();
+        var clickPoint = null;
         if (intersects.length > 0) {
+            clickPoint = new THREE.Vector3(intersects[0].point.x + pivotPoint.x, intersects[0].point.y + pivotPoint.y, intersects[0].point.z + pivotPoint.z);
             console.log('intersectLocation');
-            console.log(intersects[0].point.x);
-            console.log(intersects[0].point.y);
-            console.log(intersects[0].point.z);
-            return intersects[0].point;
+            console.log(clickPoint.x);
+            console.log(clickPoint.y);
+            console.log(clickPoint.z);
+            return clickPoint;
         } else {
             return null;
         }
@@ -566,9 +569,11 @@ class Visualizer extends Component {
 
         SET_WORKPIECE_XY_MOUSE_LOC: () => {
             const loc = this.getMousePhysicalLoc();
+            const pivotPoint = this.pivotPoint.get();
             if (loc != null) {
                 if (this.visualizer) {
-                    this.visualizer.group.position.set(loc.x, loc.y, 0.0);
+                    //Scene already acounts for camera pivot point, so subtract it out
+                    this.visualizer.group.position.set(loc.x - pivotPoint.x, loc.y - pivotPoint.y, 0.0 - pivotPoint.z);
                     this.updateScene({ forceUpdate: true });
                     controller.command('gcode', `G54 X${loc.x} Y${loc.y}`);
                 }
