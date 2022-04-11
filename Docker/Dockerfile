@@ -98,3 +98,4 @@ WORKDIR /root/gsender
 #RUN npm run prepare
 #RUN npm run build
 
+#Try open cv 4.5.0 4.5.1 uses different form of Tracker libarires.
