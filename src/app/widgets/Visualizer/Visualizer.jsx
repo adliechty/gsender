@@ -66,6 +66,12 @@ import {
 } from './constants';
 import styles from './index.styl';
 
+const cv2 = require('opencv4nodejs');
+
+let cvCap = new cv2.VideoCapture(0);
+cvCap.set(cv2.CAP_PROP_FRAME_WIDTH, 1024);
+cvCap.set(cv2.CAP_PROP_FRAME_HEIGHT, 768);
+
 const IMPERIAL_GRID_SPACING = 25.4; // 1 in
 const METRIC_GRID_SPACING = 10; // 10 mm
 const CAMERA_VIEWPORT_WIDTH = 300; // 300 mm
@@ -201,6 +207,7 @@ class Visualizer extends Component {
         this.visualizer = null;
         this.clientX = 0.0;
         this.clientY = 0.0;
+        this.captureEnabled = false;
     }
 
     componentDidMount() {
@@ -557,6 +564,18 @@ class Visualizer extends Component {
             return null;
         }
     }
+    processVideo() {
+        if (!(this.captureEnabled)) {
+            return;
+        }
+        const frame = cvCap.read();
+        const image = cv2.imencode('.jpg', frame).toString('base64');
+        image.save('./webcam.jpg');
+        console.log('image saved');
+        // schedule the next one.
+        //kick off neext frame
+        setTimeout(this.processVideo, 100);
+    }
 
     buttonControlEvents = {
         JOG_TO_MOUSE_LOC: () => {
@@ -577,6 +596,14 @@ class Visualizer extends Component {
                     this.updateScene({ forceUpdate: true });
                     controller.command('gcode', `G54 X${loc.x} Y${loc.y}`);
                 }
+            }
+        },
+        START_STOP_VIDEO_CAPTURE: () => {
+            if (this.captureEnabled) {
+                this.captureEnabled = false;
+            } else {
+                setTimeout(this.processVideo, 0);
+                this.captureEnabled = true;
             }
         }
     }
