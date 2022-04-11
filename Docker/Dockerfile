@@ -79,18 +79,22 @@ WORKDIR /root/.nvm
 
 RUN git checkout `git describe --abbrev=0 --tags`
 WORKDIR /root
-RUN . /root/.nvm/nvm.sh
 RUN export NVM_DIR="$HOME/.nvm"
-RUN [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+#https://github.com/justadudewhohacks/opencv4nodejs/issues/775
 RUN git clone https://github.com/adliechty/gsender.git
+RUN export OPENCV4NODEJS_AUTOBUILD_FLAGS=-DBUILD_LIST=core,imgproc,imgcodecs,videoio,highgui,video,calib3d,features2d,objdetect,dnn,ml,flann,photo,stitching,gapi
+
+#RUN . /root/.nvm/nvm.sh
+#RUN [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 WORKDIR /root/gsender
-RUN nvm install 14
-RUN nvm use 14
-#RUN npm install npm -g
-RUN npm install -g eslint
-RUN npm install eslint-config-trendmicro -f -g
-RUN npm install babel-eslint -g
-RUN npm install
-RUN npm run prepare
-RUN npm run build
+#RUN nvm install 14
+#RUN nvm use 14
+########RUN npm install npm -g
+#RUN npm install -g eslint
+#RUN npm install eslint-config-trendmicro -f -g
+#RUN npm install babel-eslint -g
+#RUN npm install
+#RUN npm run prepare
+#RUN npm run build
 
