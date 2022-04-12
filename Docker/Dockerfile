@@ -8,16 +8,20 @@ ENV OPENCV4NODEJS_DISABLE_AUTOBUILD=1
 
 RUN apt-get update && \
 apt-get install -y build-essential curl && \
-apt-get install -y --no-install-recommends wget unzip git python cmake vim build-essential && \
+apt-get install -y --no-install-recommends wget unzip git python cmake vim && \
 curl -sL https://deb.nodesource.com/setup_${NODEJS_MAJOR_VERSION}.x | bash && \
 apt-get install -y nodejs && node -v && npm -v && \
 rm -rf /var/lib/apt/lists/* && \
 mkdir opencv && \
 cd opencv
-RUN wget https://github.com/Itseez/opencv/archive/refs/heads/${OPENCV_VERSION}.zip --no-check-certificate -O opencv-${OPENCV_VERSION}.zip
+
+RUN wget https://github.com/opencv/opencv/archive/refs/tags/${OPENCV_VERSION}.zip --no-check-certificate -O opencv-${OPENCV_VERSION}.zip
+#RUN wget https://github.com/Itseez/opencv/archive/refs/heads/${OPENCV_VERSION}.zip --no-check-certificate -O opencv-${OPENCV_VERSION}.zip
+RUN apt update
+RUN apt install -y build-essential
 RUN unzip opencv-${OPENCV_VERSION}.zip && \
 if [ -n "$WITH_CONTRIB" ]; then \
-	wget https://github.com/Itseez/opencv_contrib/archive/refs/heads/${OPENCV_VERSION}.zip --no-check-certificate -O opencv_contrib-${OPENCV_VERSION}.zip; \
+	wget https://github.com/opencv/opencv_contrib/archive/refs/heads/${OPENCV_VERSION}.zip --no-check-certificate -O opencv_contrib-${OPENCV_VERSION}.zip; \
 	unzip opencv_contrib-${OPENCV_VERSION}.zip; \
 fi && \
 mkdir opencv-${OPENCV_VERSION}/build && \
@@ -85,6 +89,8 @@ RUN export NVM_DIR="$HOME/.nvm"
 RUN git clone https://github.com/adliechty/gsender.git
 RUN export OPENCV4NODEJS_AUTOBUILD_FLAGS=-DBUILD_LIST=core,imgproc,imgcodecs,videoio,highgui,video,calib3d,features2d,objdetect,dnn,ml,flann,photo,stitching,gapi
 
+#RUN apt update
+#RUN apt install build-essential
 #RUN . /root/.nvm/nvm.sh
 #RUN [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 WORKDIR /root/gsender
@@ -95,6 +101,8 @@ WORKDIR /root/gsender
 #RUN npm install eslint-config-trendmicro -f -g
 #RUN npm install babel-eslint -g
 #RUN npm install
+#npm install --save opencv-build
+#npm install --save opencv4nodejs
 #RUN npm run prepare
 #RUN npm run build
 
