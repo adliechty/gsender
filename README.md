@@ -1,3 +1,24 @@
+This is a branch from gSender from Sienci labs.  It is not the main code, but
+somewhere to experiment with different features, in particular, using
+a cell phone picture of your cnc bed to create a preview of where the cnc
+machine will cut, and also enabling you to click on the image to move
+the cnc machine to the clicked location.  It is a work in progress.  I may
+not be the one that has the final code to do this, but is just a place to have
+fun and see what is possible.
+
+I created a folder called Docker where I have a Docerfile to build an image
+for development, and a file called postDockerbuild.sh where I have some
+post build commands to run to finish off the process.
+
+Right now I am stuck at getting openCV to work with javascript/nodejs.
+I'll probably give this a pause.  Right now it complains about not being
+able to find child_process, even though I have installed that with npm.
+
+I am brand new to javascript and nodejs, so it may be something simple to fix.
+This is not official, and just a place to experment.  I'm open to suggestions
+on how to get opencv to work with nodejs from anyone who has done this before.
+See buildDocerk.bat, Docerfile, and postDockerbuild.sh to see what I've tried.
+
 # ![gSender logo](https://github.com/Sienci-Labs/sender/blob/master/src/app/images/icon-git.png?raw=true)gSender: connect to and control [Grbl](https://github.com/grbl/grbl)-based CNCs
 
 gSender is a feature-packed CNC interface software designed to be clean and easy to learn while retaining a depth of capabilities for advanced users. Its development was begun out of a passion for hobby CNC machines: an interface rebuilt to suit the needs of the at-home CNC user.

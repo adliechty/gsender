@@ -101,6 +101,7 @@ WORKDIR /root/gsender
 #RUN npm install eslint-config-trendmicro -f -g
 #RUN npm install babel-eslint -g
 #RUN npm install
+#RUN npm install child_process
 #npm install --save opencv-build
 #npm install --save opencv4nodejs
 #RUN npm run prepare
